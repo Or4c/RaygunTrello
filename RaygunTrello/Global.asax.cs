@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using RaygunTrello.Models;
+using RaygunTrello.Services;
 
 namespace RaygunTrello
 {
@@ -16,6 +18,10 @@ namespace RaygunTrello
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Register services
+            ServiceLocator.RegisterSingletonService<ITrelloService, TrelloService>();
+            ServiceLocator.RegisterSingletonService<ITrelloRepository, TrelloRepository>();
         }
     }
 }

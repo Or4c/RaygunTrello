@@ -1,31 +1,18 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
-
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+﻿<script type="text/javascript">
+    if (window.localStorage.getItem("com.albedogames.usertoken") === undefined) {
+        var authUrl =
+            "https://trello.com/1/authorize?expiration=never&name=RaygunTrello&key=1f129d5b20e344eeeac6eb002147c673";
+        var myWindow = window.open(authUrl, "RaygunTrello Auth", "width=400,height=600");    
+    } else {
+        window.location.href = "/Board/Index";
+    }
+</script>
+<div>
+    <h1>Welcome to RaygunTrello</h1>
+    <p>Please be sure to unblock popups for this site</p>
+    <p><strong>Please type or paste your Trello user token here</strong></p>
+    <form action="/Home/Token" method="post">
+        <input type="text" name="userToken"/>
+        <button type="submit">Submit</button>
+    </form>
 </div>

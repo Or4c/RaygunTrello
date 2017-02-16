@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 
 namespace RaygunTrello.Controllers
@@ -13,17 +15,12 @@ namespace RaygunTrello.Controllers
             return View();
         }
 
-        public ActionResult About()
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Token(string userToken)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
+            // Check if user token is valid
+            // If valid then redirect to /Board/Index
+            // If not valid then redirect back to Home/Index with an error message
             return View();
         }
     }
