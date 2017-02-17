@@ -21,7 +21,6 @@ namespace RaygunTrello
 
             // Register services
             ServiceLocator.RegisterSingletonService<ITrelloService, TrelloService>();
-            ServiceLocator.RegisterSingletonService<ITrelloRepository, TrelloRepository>();
         }
     }
 }
