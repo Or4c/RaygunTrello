@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Configuration;
 using RaygunTrello.Models;
 using Newtonsoft.Json;
@@ -23,29 +21,43 @@ namespace RaygunTrello.Services
             _applicationKey = WebConfigurationManager.AppSettings["TrelloApplicationKey"];
         }
 
-        public async Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, int boardId)
+        public async Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, string boardId)
         {
-            //var cards = await GetTrelloObjectAsync<List<TrelloCard>>(
-            //    $"boards/{boardId}/cards",
-            //    userToken,
-            //    "open"
-            //    );
-            throw new NotImplementedException();
+            var cards = await GetTrelloObjectAsync<List<TrelloCard>>(
+                $"boards/{boardId}/cards",
+                userToken,
+                "open",
+                "name,desc,url"
+                );
+            return cards;
         }
 
-        public async Task AddCommentToCardAsync(string userToken, int cardId, string comment)
+
+        public async Task<List<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId)
         {
-            throw new NotImplementedException();
+            var comments = await GetTrelloObjectAsync<List<TrelloComment>>(
+                $"cards/{cardId}/actions",
+                userToken,
+                "commentCard"
+                );
+            return comments;
+        }
+
+        public async Task AddCommentToCardAsync(string userToken, string cardId, string comment)
+        {
+            var uri =
+                $"{TrelloEndpoint}cards/{cardId}/actions/comments?key={_applicationKey}&token={userToken}&text={comment}";
+            await _httpClient.PostAsync(uri, null);
         }
 
         public async Task<bool> ValidateUserTokenAsync(string userToken)
         {
-            return await GetMemberData(userToken) == null;
+            return await GetMemberDataAsync(userToken) == null;
         }
 
         public async Task<IEnumerable<TrelloBoard>> GetUserBoardsAsync(string userToken)
         {
-            var member = await GetMemberData(userToken);
+            var member = await GetMemberDataAsync(userToken);
             if (member == null) return null;
 
             var boards = await GetTrelloObjectAsync<List<TrelloBoard>>(
@@ -58,11 +70,11 @@ namespace RaygunTrello.Services
             return boards;
         }
 
-        private async Task<TrelloMember> GetMemberData(string userToken)
+        private async Task<TrelloMember> GetMemberDataAsync(string userToken)
         {
             var member = await GetTrelloObjectAsync<TrelloMember>(
                 "members/me", 
-                userToken, 
+                userToken,
                 fields: "username,uiBoards"
                 );
 

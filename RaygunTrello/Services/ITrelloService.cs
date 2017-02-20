@@ -10,8 +10,9 @@ namespace RaygunTrello.Services
     public interface ITrelloService
     {
         Task<IEnumerable<TrelloBoard>> GetUserBoardsAsync(string userToken);
-        Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, int boardId);
-        Task AddCommentToCardAsync(string userToken, int cardId, string comment);
+        Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, string boardId);
+        Task<List<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId);
+        Task AddCommentToCardAsync(string userToken, string cardId, string comment);
         Task<bool> ValidateUserTokenAsync(string userToken);
     }
 }
