@@ -32,8 +32,7 @@ namespace RaygunTrello.Services
             return cards;
         }
 
-
-        public async Task<List<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId)
+        public async Task<IEnumerable<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId)
         {
             var comments = await GetTrelloObjectAsync<List<TrelloComment>>(
                 $"cards/{cardId}/actions",
@@ -61,7 +60,7 @@ namespace RaygunTrello.Services
             if (member == null) return null;
 
             var boards = await GetTrelloObjectAsync<List<TrelloBoard>>(
-                $"members/{member.UserName}", 
+                $"members/{member.UserName}/boards", 
                 userToken, 
                 "open", 
                 "name,desc"
@@ -89,8 +88,10 @@ namespace RaygunTrello.Services
             )
         {
             var response =
-                await _httpClient.GetAsync($"{TrelloEndpoint}{endpoint}?key={_applicationKey}&token={userToken}&filters={filters}&fields={fields}");
-            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<T>(response.Content.ToString()) : default(T);
+                await _httpClient.GetAsync($"{TrelloEndpoint}{endpoint}?key={_applicationKey}&token={userToken}&filter={filters}&fields={fields}");
+
+            var jsonContent = await response.Content.ReadAsStringAsync();
+            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<T>(jsonContent) : default(T);
         }
 
     }

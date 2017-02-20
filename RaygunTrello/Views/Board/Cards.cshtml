@@ -1,0 +1,13 @@
+﻿@model IEnumerable<RaygunTrello.Models.TrelloCard>
+
+<div class="card-list">
+    @foreach (var card in Model)
+    {
+        <a href="">
+            <div class="card">
+                <h4>@card.Name</h4>
+                <strong>@card.Desc</strong>
+            </div>    
+        </a>
+    }
+</div>

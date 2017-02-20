@@ -20,12 +20,16 @@ namespace RaygunTrello.Controllers
         // GET: Boards
         public async Task<ActionResult> Index(string userToken)
         {
-            // Validate user token (maybe as filter)
-            // TODO: user token validation
             var boards = await _trelloService.GetUserBoardsAsync(userToken);
-            
-            // Get a list of all boards for the user
-            return View();
+            ViewBag.UserToken = userToken;
+            return View(boards);
+        }
+
+        // GET: Cards
+        public async Task<ActionResult> Cards(string boardId, string userToken)
+        {
+            var cards = await _trelloService.GetCardsForBoardAsync(userToken, boardId);
+            return View(cards);
         }
     }
 }

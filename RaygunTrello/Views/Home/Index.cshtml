@@ -9,11 +9,12 @@
         if (paramSplitIndex === -1) {
             var authUrl =
                 "https://trello.com/1/authorize?scope=read,write,account&expiration=never&name=RaygunTrello&key=1f129d5b20e344eeeac6eb002147c673&response_type=token";
-            var myWindow = window.open(authUrl, "RaygunTrello Auth", "width=500,height=600");        
+            var myWindow = window.open(authUrl, "RaygunTrello Auth", "width=500,height=600");
         } else {
+            window.localStorage.setItem("com.albedogames.usertoken", urlToken);
             window.location.href = "/Board/Index?userToken=" + urlToken;
         }
-        
+
     } else {
         window.location.href = "/Board/Index?userToken=" + userToken;
     }
