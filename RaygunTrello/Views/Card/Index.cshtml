@@ -1,2 +1,20 @@
-﻿@model IEnumerable<RaygunTrello.Models.TrelloComment>
-
+﻿@model RaygunTrello.Controllers.CardController.TrelloCardViewModel
+<div class="card-detail">
+    <h4>@Model.Card.Name</h4>
+    <p class="card-description">@Model.Card.Desc</p>
+    <div class="comment-list">
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="comment">
+                <p class="date">@comment.Date</p>
+                <p class="comment-text">@comment.Data.Text</p>
+            </div>
+        }
+    </div>
+    <div clasd="add-comment-form">
+        <form method="post">
+            <input type="text" name="comment"/>
+            <button type="submit">Add Comment</button>
+        </form>
+    </div>
+</div>

@@ -29,7 +29,9 @@ namespace RaygunTrello.Controllers
         public async Task<ActionResult> Cards(string boardId, string userToken)
         {
             var cards = await _trelloService.GetCardsForBoardAsync(userToken, boardId);
+            ViewBag.UserToken = userToken;
             return View(cards);
         }
+
     }
 }

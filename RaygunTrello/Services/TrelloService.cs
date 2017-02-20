@@ -94,5 +94,15 @@ namespace RaygunTrello.Services
             return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<T>(jsonContent) : default(T);
         }
 
+        public async Task<TrelloCard> GetCardAsync(string userToken, string cardId)
+        {
+            var card = await GetTrelloObjectAsync<TrelloCard>(
+                $"cards/{cardId}",
+                userToken,
+                fields:"name,desc,url"
+                );
+
+            return card;
+        }
     }
 }
