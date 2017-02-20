@@ -8,6 +8,15 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+    @if (ViewBag.Errors != null)
+    {
+        <div class="error-box">
+            @foreach (var error in (IEnumerable<string>)ViewBag.Errors)
+            {
+                <p class="error-msg">@error</p>
+            }
+        </div>
+    }
     <div class="container body-content">
         @RenderBody()
         <hr />
