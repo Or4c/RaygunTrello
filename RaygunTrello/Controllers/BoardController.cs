@@ -1,34 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
-using RaygunTrello.Services;
 
 namespace RaygunTrello.Controllers
 {
-    public class BoardController : Controller
+    [HandleError]
+    public class BoardController : BaseController
     {
-        private readonly ITrelloService _trelloService;
-
-        public BoardController()
-        {
-            _trelloService = ServiceLocator.GetService<ITrelloService>();
-        }
         
-        // GET: Boards
         public async Task<ActionResult> Index(string userToken)
         {
-            var boards = await _trelloService.GetUserBoardsAsync(userToken);
+            var validateResult = await ValidateToken(userToken);
+            if (validateResult != null) return validateResult;
+
+            var boards = await TrelloService.GetUserBoardsAsync(userToken);
             ViewBag.UserToken = userToken;
             return View(boards);
         }
 
-        // GET: Cards
         public async Task<ActionResult> Cards(string boardId, string userToken)
         {
-            var cards = await _trelloService.GetCardsForBoardAsync(userToken, boardId);
+            var validateResult = await ValidateToken(userToken);
+            if (validateResult != null) return validateResult;
+
+            var cards = await TrelloService.GetCardsForBoardAsync(userToken, boardId);
+            if(cards == null) return new HttpNotFoundResult("Cannot find a board matching that id");
+
             ViewBag.UserToken = userToken;
             return View(cards);
         }

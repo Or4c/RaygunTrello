@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<RaygunTrello.Models.TrelloCard>
 
+<h2>Select a card to comment on</h2>
 <div class="card-list">
     @foreach (var card in Model)
     {
         <a href="/Card?cardId=@card.Id&userToken=@ViewBag.UserToken">
             <div class="card">
                 <h4>@card.Name</h4>
-                <strong>@card.Desc</strong>
-            </div>    
+            </div>
         </a>
     }
 </div>

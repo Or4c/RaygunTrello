@@ -51,7 +51,7 @@ namespace RaygunTrello.Services
 
         public async Task<bool> ValidateUserTokenAsync(string userToken)
         {
-            return await GetMemberDataAsync(userToken) == null;
+            return await GetMemberDataAsync(userToken) != null;
         }
 
         public async Task<IEnumerable<TrelloBoard>> GetUserBoardsAsync(string userToken)
@@ -89,9 +89,17 @@ namespace RaygunTrello.Services
         {
             var response =
                 await _httpClient.GetAsync($"{TrelloEndpoint}{endpoint}?key={_applicationKey}&token={userToken}&filter={filters}&fields={fields}");
-
             var jsonContent = await response.Content.ReadAsStringAsync();
-            return response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<T>(jsonContent) : default(T);
+
+            try
+            {
+                var jsonObject = JsonConvert.DeserializeObject<T>(jsonContent);
+                return response.IsSuccessStatusCode ? jsonObject : default(T);
+            }
+            catch (JsonException)
+            {
+                return default(T);
+            }
         }
 
         public async Task<TrelloCard> GetCardAsync(string userToken, string cardId)
