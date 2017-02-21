@@ -12,7 +12,7 @@ namespace RaygunTrello.Controllers
             var validateResult = await ValidateToken(userToken);
             if (validateResult != null) return validateResult;
 
-            var boards = await TrelloService.GetUserBoardsAsync(userToken);
+            var boards = await TrelloRepository.GetUserBoardsAsync(userToken);
             ViewBag.UserToken = userToken;
             return View(boards);
         }
@@ -22,7 +22,7 @@ namespace RaygunTrello.Controllers
             var validateResult = await ValidateToken(userToken);
             if (validateResult != null) return validateResult;
 
-            var cards = await TrelloService.GetCardsForBoardAsync(userToken, boardId);
+            var cards = await TrelloRepository.GetCardsForBoardAsync(userToken, boardId);
             if(cards == null) return new HttpNotFoundResult("Cannot find a board matching that id");
 
             ViewBag.UserToken = userToken;

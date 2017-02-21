@@ -13,8 +13,8 @@ namespace RaygunTrello.Controllers
             var validateResult = await ValidateToken(userToken);
             if (validateResult != null) return validateResult;
 
-            var comments = await TrelloService.GetCardCommentsAsync(userToken, cardId);
-            var card = await TrelloService.GetCardAsync(userToken, cardId);
+            var comments = await TrelloRepository.GetCardCommentsAsync(userToken, cardId);
+            var card = await TrelloRepository.GetCardAsync(userToken, cardId);
 
             if (card == null) return new HttpNotFoundResult("Can't find a card matching that id");
 
@@ -28,7 +28,7 @@ namespace RaygunTrello.Controllers
             var validateResult = await ValidateToken(userToken);
             if (validateResult != null) return validateResult;
 
-            await TrelloService.AddCommentToCardAsync(userToken, cardId, comment);
+            await TrelloRepository.AddCommentToCardAsync(userToken, cardId, comment);
             return RedirectPermanent($"/Card?cardId={cardId}&userToken={userToken}");
         }
 

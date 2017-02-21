@@ -6,11 +6,17 @@ namespace RaygunTrello.Services
 {
     public interface ITrelloService
     {
-        Task<IEnumerable<TrelloBoard>> GetUserBoardsAsync(string userToken);
-        Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, string boardId);
-        Task<TrelloCard> GetCardAsync(string userToken, string cardId);
-        Task<IEnumerable<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId);
+        Task<ITrelloServiceResponse> GetUserBoardsAsync(string userToken, string username);
+        Task<ITrelloServiceResponse> GetCardsForBoardAsync(string userToken, string boardId);
+        Task<ITrelloServiceResponse> GetCardAsync(string userToken, string cardId);
+        Task<ITrelloServiceResponse> GetCardCommentsAsync(string userToken, string cardId);
+        Task<ITrelloServiceResponse> GetMemberDataAsync(string userToken);
         Task AddCommentToCardAsync(string userToken, string cardId, string comment);
-        Task<bool> ValidateUserTokenAsync(string userToken);
+    }
+
+    public interface ITrelloServiceResponse
+    {
+        string Data { get; set; }
+        bool Success { get; set; }
     }
 }

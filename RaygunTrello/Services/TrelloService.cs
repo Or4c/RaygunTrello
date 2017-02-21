@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Configuration;
-using RaygunTrello.Models;
-using Newtonsoft.Json;
 
 namespace RaygunTrello.Services
 {
-    public class TrelloService : ITrelloService
+    public class TrelloService : ITrelloService, IDisposable
     {
         private readonly HttpClient _httpClient;
         private readonly string _applicationKey;
         private const string TrelloEndpoint = "https://api.trello.com/1/";
+
+        public class ServiceResponse : ITrelloServiceResponse
+        {
+            public string Data { get; set; }
+            public bool Success { get; set; }
+        }
 
         public TrelloService()
         {
@@ -21,9 +24,9 @@ namespace RaygunTrello.Services
             _applicationKey = WebConfigurationManager.AppSettings["TrelloApplicationKey"];
         }
 
-        public async Task<IEnumerable<TrelloCard>> GetCardsForBoardAsync(string userToken, string boardId)
+        public async Task<ITrelloServiceResponse> GetCardsForBoardAsync(string userToken, string boardId)
         {
-            var cards = await GetTrelloObjectAsync<List<TrelloCard>>(
+            var cards = await DoRequest(
                 $"boards/{boardId}/cards",
                 userToken,
                 "open",
@@ -32,9 +35,9 @@ namespace RaygunTrello.Services
             return cards;
         }
 
-        public async Task<IEnumerable<TrelloComment>> GetCardCommentsAsync(string userToken, string cardId)
+        public async Task<ITrelloServiceResponse> GetCardCommentsAsync(string userToken, string cardId)
         {
-            var comments = await GetTrelloObjectAsync<List<TrelloComment>>(
+            var comments = await DoRequest(
                 $"cards/{cardId}/actions",
                 userToken,
                 "commentCard"
@@ -49,18 +52,10 @@ namespace RaygunTrello.Services
             await _httpClient.PostAsync(uri, null);
         }
 
-        public async Task<bool> ValidateUserTokenAsync(string userToken)
+        public async Task<ITrelloServiceResponse> GetUserBoardsAsync(string userToken, string username)
         {
-            return await GetMemberDataAsync(userToken) != null;
-        }
-
-        public async Task<IEnumerable<TrelloBoard>> GetUserBoardsAsync(string userToken)
-        {
-            var member = await GetMemberDataAsync(userToken);
-            if (member == null) return null;
-
-            var boards = await GetTrelloObjectAsync<List<TrelloBoard>>(
-                $"members/{member.UserName}/boards", 
+            var boards = await DoRequest(
+                $"members/{username}/boards", 
                 userToken, 
                 "open", 
                 "name,desc"
@@ -69,9 +64,9 @@ namespace RaygunTrello.Services
             return boards;
         }
 
-        private async Task<TrelloMember> GetMemberDataAsync(string userToken)
+        public async Task<ITrelloServiceResponse> GetMemberDataAsync(string userToken)
         {
-            var member = await GetTrelloObjectAsync<TrelloMember>(
+            var member = await DoRequest(
                 "members/me", 
                 userToken,
                 fields: "username,uiBoards"
@@ -79,32 +74,11 @@ namespace RaygunTrello.Services
 
             return member;
         }
+        
 
-        private async Task<T> GetTrelloObjectAsync<T>(
-            string endpoint, 
-            string userToken, 
-            string filters = "all",
-            string fields = "all"
-            )
+        public async Task<ITrelloServiceResponse> GetCardAsync(string userToken, string cardId)
         {
-            var response =
-                await _httpClient.GetAsync($"{TrelloEndpoint}{endpoint}?key={_applicationKey}&token={userToken}&filter={filters}&fields={fields}");
-            var jsonContent = await response.Content.ReadAsStringAsync();
-
-            try
-            {
-                var jsonObject = JsonConvert.DeserializeObject<T>(jsonContent);
-                return response.IsSuccessStatusCode ? jsonObject : default(T);
-            }
-            catch (JsonException)
-            {
-                return default(T);
-            }
-        }
-
-        public async Task<TrelloCard> GetCardAsync(string userToken, string cardId)
-        {
-            var card = await GetTrelloObjectAsync<TrelloCard>(
+            var card = await DoRequest(
                 $"cards/{cardId}",
                 userToken,
                 fields:"name,desc,url"
@@ -112,5 +86,29 @@ namespace RaygunTrello.Services
 
             return card;
         }
+
+        private async Task<ITrelloServiceResponse> DoRequest(
+            string endpoint,
+            string userToken,
+            string filters = "all",
+            string fields = "all"
+        )
+        {
+            var response = await _httpClient.GetAsync($"{TrelloEndpoint}{endpoint}?key={_applicationKey}&token={userToken}&filter={filters}&fields={fields}");
+
+            var success = (response.StatusCode == HttpStatusCode.OK);
+            var data = await response.Content.ReadAsStringAsync();
+
+            return new ServiceResponse {Data = data, Success = success};
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
+        }
+
+       
     }
+
+   
 }
