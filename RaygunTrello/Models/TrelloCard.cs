@@ -11,6 +11,7 @@ namespace RaygunTrello.Models
         public string Desc { get; set; }
         public string Url { get; set; }
         public string Id { get; set; }
+        public string IdBoard { get; set; }
     }
 
     public class TrelloComment

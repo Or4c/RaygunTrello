@@ -81,7 +81,7 @@ namespace RaygunTrello.Services
             var card = await DoRequest(
                 $"cards/{cardId}",
                 userToken,
-                fields:"name,desc,url"
+                fields:"name,desc,url,idBoard"
                 );
 
             return card;

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<RaygunTrello.Models.TrelloCard>
 
 <h2>Select a card to comment on</h2>
+<h4><a href="/Board/Index?userToken=@ViewBag.UserToken">&lt;= Back to Boards</a></h4>
 <div class="card-list">
     @foreach (var card in Model)
     {
